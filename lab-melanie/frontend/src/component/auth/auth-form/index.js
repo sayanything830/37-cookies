@@ -1,5 +1,7 @@
 import React from 'react';
 import {renderIf} from '../../../lib/utils';
+import {Redirect} from 'react-router';
+import Dashboard from '../../dashboard/index';
 
 export default class AuthForm extends React.Component {
   constructor(props) {
@@ -33,43 +35,51 @@ export default class AuthForm extends React.Component {
     let {username, email, password} = this.state;
     this.props.onComplete({ username, email, password })
       .then(() => this.setState({ username: '', email: '', password: '' }))
+      .then(() => this.props.history.push('/dashboard'))
       .catch(error => this.setState({error}));
   }
 
   render() {
+    const {fireRedirect} = this.state;
     return (
-      <form
-        className="auth-form"
-        onSubmit={this.handleSubmit}
-        noValidate>
+      <div>
+        <form
+          className="auth-form"
+          onSubmit={this.handleSubmit}
+          noValidate>
+          <fieldset>
+            <input
+              type="text"
+              name="username"
+              placeholder="username"
+              pattern=""
+              value={this.state.username}
+              onChange={this.handleChange}/>
+          </fieldset>
+          {renderIf(this.state.usernameError, <span className="tooltip">{this.state.usernameError}</span>)}
 
-        <input
-          type="text"
-          name="username"
-          placeholder="username"
-          pattern=""
-          value={this.state.username}
-          onChange={this.handleChange}/>
-        {renderIf(this.state.usernameError, <span className="tooltip">{this.state.usernameError}</span>)}
+          {renderIf(this.props.auth === 'signup',
+            <fieldset>
+              <input
+                type="email"
+                name="email"
+                placeholder="email"
+                value={this.state.email}
+                onChange={this.handleChange}/>
+            </fieldset>
+          )}
+          <fieldset>
+            <input
+              type="password"
+              name="password"
+              placeholder="password"
+              value={this.state.password}
+              onChange={this.handleChange}/>
+          </fieldset>
 
-        {renderIf(this.props.auth === 'signup',
-          <input
-            type="email"
-            name="email"
-            placeholder="email"
-            value={this.state.email}
-            onChange={this.handleChange}/>
-        )}
-
-        <input
-          type="password"
-          name="password"
-          placeholder="password"
-          value={this.state.password}
-          onChange={this.handleChange}/>
-
-        <button type="submit">{this.props.auth}</button>
-      </form>
+          <button type="submit">{this.props.auth}</button>
+        </form>
+      </div>
     );
   }
 }

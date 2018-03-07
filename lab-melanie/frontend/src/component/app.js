@@ -1,5 +1,5 @@
 import React from 'react';
-import Content from './content';
+import Dashboard from './dashboard';
 import Landing from './landing';
 import {Provider} from 'react-redux';
 import createStore from '../lib/app-create-store';
@@ -23,9 +23,9 @@ export default class App extends React.Component {
           <BrowserRouter>
             <React.Fragment>
               <Route exact path="/welcome/:auth" component={Landing}/>
-              <Route exact path="/content" component={() =>
+              <Route exact path="/dashboard" component={() =>
                 token
-                  ? <Content token={token}/>
+                  ? <Dashboard token={token}/>
                   : <Redirect to="/welcome/signup"/>}
               />
             </React.Fragment>
