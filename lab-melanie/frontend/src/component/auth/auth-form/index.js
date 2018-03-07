@@ -1,6 +1,6 @@
 import React from 'react';
 import {renderIf} from '../../../lib/utils';
-import {Redirect} from 'react-router';
+import {Redirect} from 'react-router-dom';
 import Dashboard from '../../dashboard/index';
 
 export default class AuthForm extends React.Component {
@@ -34,15 +34,20 @@ export default class AuthForm extends React.Component {
     e.preventDefault();
     let {username, email, password} = this.state;
     this.props.onComplete({ username, email, password })
-      .then(() => this.setState({ username: '', email: '', password: '' }))
-      .then(() => this.props.history.push('/dashboard'))
+      .then(action => {
+        this.setState({ username: '', email: '', password: '' });
+        if(!action.payload) return;
+        localStorage.token = action.payload;
+        return this.setState({token: true});
+      })
       .catch(error => this.setState({error}));
   }
 
   render() {
-    const {fireRedirect} = this.state;
     return (
       <div>
+        {console.log('this.state.token', this.state.token)}
+        {this.state.token ? <Redirect to='/dashboard'/> : undefined}
         <form
           className="auth-form"
           onSubmit={this.handleSubmit}
@@ -79,6 +84,7 @@ export default class AuthForm extends React.Component {
 
           <button type="submit">{this.props.auth}</button>
         </form>
+
       </div>
     );
   }

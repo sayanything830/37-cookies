@@ -8,6 +8,10 @@ import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 const store = createStore();
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   componentWillMount() {
     if(localStorage.token)
       store.dispatch({type: 'TOKEN_SET', payload: localStorage.token});
